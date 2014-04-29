@@ -1,0 +1,17 @@
+<domain type='lxc'>
+  <name>test</name>
+  <memory>500000</memory>
+  <os>
+    <type>exe</type>
+    <init>/bin/bash</init>
+  </os>
+  <vcpu>1</vcpu>
+  <clock offset='utc'/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <emulator>/usr/lib/libvirt_lxc</emulator>
+    <console type='pty' />
+  </devices>
+</domain>

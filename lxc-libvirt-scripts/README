@@ -1,0 +1,35 @@
+These scripts tries to allow the libvirt lxc driver to leverage the
+great work being done by Daniel Lezcano and the other developers of
+lxc.sf.net.
+
+It's quite ubuntu-specific, so should probably be renamed.
+
+It uses the container creation 'templates' from lxc.sf.net to
+create a rootfs, tweaks that to something libvirt can use, then
+defines a libvirt-lxc domain.  So, you can start an ubuntu
+lucid container by doing:
+
+	lxc-libvirt-create.sh u1
+	virsh -c lxc:// start u1
+
+The container should be started up with ssh running, with user
+root password root.  You *can* attach to the console doing
+
+	virsh -c lxc:// console u1
+
+but once you log that session out, the container dies!  So I
+recommend not doing it unless you're debugging :)
+
+Instead, look at /var/lib/misc/dnsmasq.leases on the host to
+find the ip address assigned to the container, and then ssh
+to it.
+
+TODO PLANS
+
+Add shutdown script :)
+
+Cache the ip address somewhere easier to find.
+
+Add a vnc server running gdm.
+
+Figure out how to not kill the container when console exits.
