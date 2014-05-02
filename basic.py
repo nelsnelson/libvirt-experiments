@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import inspect
 import libvirt
 import sys
 import os
@@ -25,6 +26,7 @@ CONFIG = '''<domain type='lxc'>
 class Container:
     def __init__(self, name='test'):
         self.name = name
+        self.domain = None
         self.conn = libvirt.open('lxc:///')
         if self.conn == None:
             print 'Failed to open connection to the hypervisor'
@@ -32,14 +34,22 @@ class Container:
     def create(self, name=None):
         if not name:
             name = self.name
+
         try:
             self.domain = self.conn.lookupByName(name)
         except Exception as ex:
+            pass
+
+        if not self.domain:
             try:
                 self.domain = self.conn.defineXML(CONFIG.format(name))
-                if self.domain:
-                    result = self.domain.createWithFiles()
-                    print "Created domain: {}".format(result)
+            except Exception as ex:
+                print 'Exception creating domain {}: {}'.format(name, ex)
+                return
+
+        if not self.domain.isActive():
+            try:
+                self.domain.create()
             except Exception as ex:
                 print 'Exception creating domain {}: {}'.format(name, ex)
 
@@ -53,17 +63,24 @@ class Container:
             name = self.name
         if not domain:
             domain = self.domain
+
         try:
-            return self.domain.destroy()
+            self.domain.destroy()
         except Exception as ex:
             print 'Exception destroying domain {}: {}'.format(name, ex)
+
+        try:
+            self.domain.undefine()
+        except Exception as ex:
+            print 'Exception un-defining domain {}: {}'.format(name, ex)
 
     def __enter__(self):
         self.create()
         return self.domain
 
     def __exit__(self, type, value, tb):
-        self.destroy() 
+        self.destroy()
+        return
 
 if __name__ == '__main__':
     name = sys.argv[1] if len(sys.argv) > 1 else 'test'

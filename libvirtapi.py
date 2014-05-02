@@ -12,8 +12,9 @@ functions = dir(libvirt)
 
 functions = dir(virDomain)
 
-#print "Module domain methods:"
-#print functions
+print "Module domain methods:"
+for f in functions:
+    print "  {}".format(f)
 
 #conn = libvirt.openReadOnly(None)
 
