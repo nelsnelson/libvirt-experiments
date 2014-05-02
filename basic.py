@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-import inspect
 import libvirt
 import sys
 import os
