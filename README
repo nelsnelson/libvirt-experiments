@@ -1,0 +1,5 @@
+TODO
+
+Get networking configured for a basic scripted container.
+Get ssh working.
+Investigate if container nesting is an option for the script.
